@@ -1,11 +1,11 @@
-d11132c98ddad889e03595d0e882037f *DESCRIPTION
+1bf2c2f8e9ff6ac54ff09ef4972f9261 *DESCRIPTION
 76f45757512e1f0e5d4618bd58c0039e *NAMESPACE
 6af07dbe7e59ff4f0380540a1b189b5f *R/bs_popover.R
 7ee1d607709f0478967dca7bdcc2a6df *R/button_freeze.R
 fcdc69748c6bb125530c3a3d8df4c9cf *R/combine_padding.R
 40631469bd8a42ac1f829237d2527223 *R/onLoad.R
 63bb19b6b9844058e4bfdba7bbd60453 *R/shiny_pivot_table.R
-a76cba0e943fb3f03e118ba2f5987710 *README.md
+4376c94dde62a4486cfe101fbd2dc839 *README.md
 b39a72a1da7a9217e495a36194c8306b *inst/article/article.html
 4c53fa637fb105a062993931ee54c6b4 *inst/article/article.md
 6d4187badc4511564b6afba03b1cb746 *inst/demo_app/global.R
