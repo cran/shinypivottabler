@@ -2,6 +2,7 @@
 
 export(shinypivottabler)
 export(shinypivottablerUI)
+import(htmltools)
 import(openxlsx)
 import(pivottabler)
 import(shiny)

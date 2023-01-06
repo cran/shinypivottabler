@@ -40,7 +40,7 @@ get_expr <- function(idc, target, additional_expr) {
 #' @param additional_expr_num \code{named list} (list()). Additional computations to be allowed for quantitative vars.
 #' @param additional_expr_char \code{named list} (list()). Additional computations to be allowed for qualitative vars.
 #' @param additional_combine \code{named list} (list()). Additional combinations to be allowed.
-#' @param theme \code{list} (NULL). Theme to customize the output of the pivot table.
+#' @param theme \code{list} (NULL). Theme to customize the output of the pivot table. Use HEX color rather than rgb for export style
 #' @param export_styles \code{boolean} (TRUE). Whether or not to apply styles (like the theme) when exporting to Excel.
 #' @param show_title \code{boolean} (TRUE). Whether or not to display the app title.
 #' Some styles may not be supported by Excel.
@@ -58,7 +58,7 @@ get_expr <- function(idc, target, additional_expr) {
 #'
 #' @return Nothing. Just Start a Shiny module.
 #'
-#' @import pivottabler shiny openxlsx
+#' @import pivottabler shiny openxlsx htmltools
 #' @importFrom colourpicker colourInput
 #'
 #' @export
@@ -137,14 +137,14 @@ get_expr <- function(idc, target, additional_expr) {
 #'   fontName="Courier New, Courier",
 #'   fontSize="1em",
 #'   headerBackgroundColor = "red",
-#'   headerColor = "rgb(255, 255, 255)",
-#'   cellBackgroundColor = "rgb(255, 255, 255)",
-#'   cellColor = "rgb(0, 0, 0)",
-#'   outlineCellBackgroundColor = "rgb(192, 192, 192)",
-#'   outlineCellColor = "rgb(0, 0, 0)",
+#'   headerColor = "#FFFFFF",
+#'   cellBackgroundColor = "#FFFFFF",
+#'   cellColor = "#000000",
+#'   outlineCellBackgroundColor = "#C0C0C0",
+#'   outlineCellColor = "#000000",
 #'   totalBackgroundColor = "#59bb28",
-#'   totalColor = "rgb(0, 0, 0)",
-#'   borderColor = "rgb(64, 64, 64)"
+#'   totalColor = "#000000",
+#'   borderColor = "#404040"
 #' )
 #'
 #' ui = shiny::fluidPage(
@@ -254,14 +254,14 @@ shinypivottabler <- function(input, output, session,
           fontName="Courier New, Courier",
           fontSize="1.2em",
           headerBackgroundColor = "#217346",
-          headerColor = "rgb(255, 255, 255)",
-          cellBackgroundColor = "rgb(255, 255, 255)",
-          cellColor = "rgb(0, 0, 0)",
-          outlineCellBackgroundColor = "rgb(192, 192, 192)",
-          outlineCellColor = "rgb(0, 0, 0)",
+          headerColor = "#FFFFFF",
+          cellBackgroundColor = "#FFFFFF",
+          cellColor = "#000000",
+          outlineCellBackgroundColor = "#C0C0C0",
+          outlineCellColor = "#000000",
           totalBackgroundColor = "#59bb28",
-          totalColor = "rgb(0, 0, 0)",
-          borderColor = "rgb(64, 64, 64)"))
+          totalColor = "#000000",
+          borderColor = "#404040"))
       } else {
         get_theme(theme)
       }
@@ -271,14 +271,14 @@ shinypivottabler <- function(input, output, session,
           fontName="Courier New, Courier",
           fontSize="1.2em",
           headerBackgroundColor = "#217346",
-          headerColor = "rgb(255, 255, 255)",
-          cellBackgroundColor = "rgb(255, 255, 255)",
-          cellColor = "rgb(0, 0, 0)",
-          outlineCellBackgroundColor = "rgb(192, 192, 192)",
-          outlineCellColor = "rgb(0, 0, 0)",
+          headerColor = "#FFFFFF",
+          cellBackgroundColor = "#FFFFFF",
+          cellColor = "#000000",
+          outlineCellBackgroundColor = "#C0C0C0",
+          outlineCellColor = "#000000",
           totalBackgroundColor = "#59bb28",
-          totalColor = "rgb(0, 0, 0)",
-          borderColor = "rgb(64, 64, 64)"))
+          totalColor = "#000000",
+          borderColor = "#404040"))
       } else {
         get_theme(theme())
       }
@@ -764,14 +764,18 @@ shinypivottabler <- function(input, output, session,
               prefix <- ifelse(is.na(idcs[[index]]["prefix"]), "", idcs[[index]]["prefix"])
               suffix <- ifelse(is.na(idcs[[index]]["suffix"]), "", idcs[[index]]["suffix"])
 
+              nsmall <- nb_decimals
+              if ("0" %in% nb_decimals) nb_decimals <- NULL
+              
               combine <- if ("combine" %in% names(idcs[[index]])) {idcs[[index]]["combine"]} else {NULL}
               combine_target <- if ("combine_target" %in% names(idcs[[index]])) {gsub("[[:punct:]| ]", "_", idcs[[index]]["combine_target"])} else {NULL}
               combine_idc <- if ("combine_idc" %in% names(idcs[[index]])) {gsub(" ", "_", idcs[[index]][["combine_idc"]])} else {NULL}
 
+              
               pt$defineCalculation(calculationName = paste0(target, "_", tolower(idc), "_", index),
                                    caption = label,
                                    summariseExpression = get_expr(idc, target, additional_expr = c(get_additional_expr_num(), get_additional_expr_char())),
-                                   format = list("digits" = nb_decimals, "nsmall" = nb_decimals,
+                                   format = list("digits" = nb_decimals, "nsmall" = nsmall,
                                                  "decimal.mark" = sep_decimal,
                                                  "big.mark" = ifelse(sep_thousands == "None", "", sep_thousands),
                                                  scientific = F),
@@ -787,7 +791,7 @@ shinypivottabler <- function(input, output, session,
                                      basedOn = c(paste0(target, "_", tolower(idc), "_", index), paste0(combine_target, "_", tolower(combine_idc), "_combine_", index)),
                                      type = "calculation",
                                      calculationExpression = paste0("values$", paste0(target, "_", tolower(idc), "_", index), combine, "values$", paste0(combine_target, "_", tolower(combine_idc), "_combine_", index)),
-                                     format = list("digits" = nb_decimals, "nsmall" = nb_decimals,
+                                     format = list("digits" = nb_decimals, "nsmall" = nsmall,
                                                    "decimal.mark" = sep_decimal,
                                                    "big.mark" = ifelse(sep_thousands == "None", "", sep_thousands), scientific = F),
                                      cellStyleDeclarations = list("xl-value-format" = paste0(prefix, ifelse(sep_thousands == "None", "", paste0("#", sep_thousands)), "##0", ifelse(nb_decimals > 0, paste0(sep_decimal, paste0(rep(0, nb_decimals), collapse = "")), ""), suffix)))
